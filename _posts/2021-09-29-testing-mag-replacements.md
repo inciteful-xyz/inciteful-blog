@@ -26,13 +26,13 @@ There have been rumblings about [OpenAlex](https://blog.ourresearch.org/openalex
 There are a ton of different metadata providers out there. CrossRef, Dimensions, CORE,
 OpenCitations, the publishers themselves, etc. Both The Lens and Semantic Scholar pull data from many of these sources. According to The Len's website they get data from the [following sources](https://www.lens.org/):
 
-![](../assets/img/lens-data-sources.png)
+![](/assets/img/lens-data-sources.png)
 
 It should be noted that The Lens started off as a patent search product that expanded into academic literature, hence places like the USPTO and WIPO. As far as I'm aware, they are also the source of all patent data coming into Microsoft Academic.
 
 According to Semantic Scholar they get their data from the [following sources](https://www.semanticscholar.org/about/publishers):
 
-![](../assets/img/ss-data-sources.png)
+![](/assets/img/ss-data-sources.png)
 
 It seems like Semantic Scholar integrates more with primary sources of data than The Lens, who is more of an "aggregator of aggregators".
 
@@ -110,19 +110,19 @@ I'm most interested in the last column. I want to look at papers which have some
 
 ### Missing Papers
 
-|             | All    |         |         | Lens Missing |        |        | SS Missing |        |         |
-| ----------- | ------ | ------- | ------- | ------------ | ------ | ------ | ---------- | ------ | ------- |
-| docType     | #      | Cits    | Refs    | #            | Cits   | Refs   | #          | Cits   | Refs    |
-| Blank       | 31,202 | 28,119  | 88,227  | 180          | 105    | 384    | 5,137      | 2,906  | 4,130   |
-| Book        | 1,687  | 22,386  | 3,282   | 2            | 0      | 0      | 134        | 286    | 0       |
-| BookChapter | 1,436  | 1,728   | 6,871   | 6            | 0      | 35     | 83         | 35     | 67      |
-| Conference  | 1,891  | 21,872  | 20,933  | 7            | 69     | 83     | 101        | 61     | 910     |
-| Dataset     | 39     | 5       | 0       | 0            | 0      | 0      | 18         | 1      | 0       |
-| Journal     | 32,453 | 510,423 | 460,603 | 224          | 2,699  | 4,825  | 1,257      | 5,483  | 19,033  |
-| Patent      | 23,679 | 68,734  | 72,575  | 23,679       | 68,734 | 72,575 | 22,181     | 68,535 | 72,237  |
-| Repository  | 1,776  | 5,747   | 18,708  | 122          | 1,170  | 3,271  | 429        | 1,630  | 3,792   |
-| Thesis      | 2,168  | 934     | 11,994  | 14           | 0      | 0      | 258        | 18     | 536     |
-| Total       | 96,331 | 659,948 | 683,193 | 24,234       | 72,777 | 81,173 | 29,598     | 78,955 | 100,705 |
+|             | All        |             |             | Lens Missing |            |            | SS Missing |            |             |
+| ----------- | ---------- | ----------- | ----------- | ------------ | ---------- | ---------- | ---------- | ---------- | ----------- |
+| docType     | #          | Cits        | Refs        | #            | Cits       | Refs       | #          | Cits       | Refs        |
+| Blank       | 31,202     | 28,119      | 88,227      | 180          | 105        | 384        | 5,137      | 2,906      | 4,130       |
+| Book        | 1,687      | 22,386      | 3,282       | 2            | 0          | 0          | 134        | 286        | 0           |
+| BookChapter | 1,436      | 1,728       | 6,871       | 6            | 0          | 35         | 83         | 35         | 67          |
+| Conference  | 1,891      | 21,872      | 20,933      | 7            | 69         | 83         | 101        | 61         | 910         |
+| Dataset     | 39         | 5           | 0           | 0            | 0          | 0          | 18         | 1          | 0           |
+| Journal     | 32,453     | 510,423     | 460,603     | 224          | 2,699      | 4,825      | 1,257      | 5,483      | 19,033      |
+| Patent      | 23,679     | 68,734      | 72,575      | 23,679       | 68,734     | 72,575     | 22,181     | 68,535     | 72,237      |
+| Repository  | 1,776      | 5,747       | 18,708      | 122          | 1,170      | 3,271      | 429        | 1,630      | 3,792       |
+| Thesis      | 2,168      | 934         | 11,994      | 14           | 0          | 0          | 258        | 18         | 536         |
+| **Total**   | **96,331** | **659,948** | **683,193** | **24,234**   | **72,777** | **81,173** | **29,598** | **78,955** | **100,705** |
 
 Combining:
 https://academic.microsoft.com/paper/3020022875/

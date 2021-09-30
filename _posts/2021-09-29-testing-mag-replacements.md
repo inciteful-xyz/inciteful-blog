@@ -9,7 +9,6 @@ tags: [data, MAG, The Lens, Semantic Scholar]
 As we've all heard, [Microsoft Academic is shutting down](https://www.microsoft.com/en-us/research/project/academic/articles/microsoft-academic-to-expand-horizons-with-community-driven-approach/). While many people have not heard of them, they were by far the largest source of scholarly metadata. This data powered, directly or indirectly, many of the sites academics use today. There have been a number of blog posts covering "what's next" ([1](https://www.natureindex.com/news-blog/microsoft-academic-graph-discontinued-whats-next), [2](https://blogs.lse.ac.uk/impactofsocialsciences/2021/05/27/goodbye-microsoft-academic-hello-open-research-infrastructure/)). None of them get into the details of where tools builders should turn to after MAG. So this is a post attempting to do that with the two major players currently out there. [The Lens](https://www.semanticscholar.org/) and [Semantic Scholar](https://www.semanticscholar.org/). The bulk of the test is done by randomly selecting 100,000 papers from the MAG corpus, querying each of the services, and comparing the results.
 
 # Deciding who to test
-
 I know there are others out there like CrossRef, Dimensions, CORE, etc but for my purposes I want:
 
 1. The most data possible, this means I am looking at a data aggregator who will blend in data from sources like CrossRef.
@@ -37,15 +36,16 @@ According to Semantic Scholar they get their data from the [following sources](h
 It seems like Semantic Scholar integrates more with primary sources of data than The Lens, who is more of an "aggregator of aggregators".
 
 # Evaluation Criteria
-
 For the two that made it into the ring. I'm going to be evaluating them on a few different criteria:
 
-1. Overall Coverage
-2. The Data Structure (how are the authors, institutions, etc structured?)
-3. Data Freshness (time from a paper being published to it being integrated)
-4. Updated Data Accessibility
-5. Data Enrichment (citation contexts, external ids, etc)
-6. Other API features (search endpoints, etc)
+<!-- no toc -->
+1. [Overall Coverage](#1-overall-coverage)
+2. [Data Structure](#2-data-structure) (how are the authors, institutions, etc structured?)
+3. [Data Freshness](#3-data-freshness) (time from a paper being published to it being integrated)
+4. [Updated Data Accessibility](#4-updated-data-accessibility)
+5. [Data Enrichment](#5-data-enrichment) (citation contexts, external ids, etc)
+6. [Other API features](#6-other-api-features)
+   (search endpoints, etc)
 
 These criteria are just what's important for Inciteful, YMMV.
 
@@ -66,11 +66,9 @@ The main part of the test is going to be evaluating the coverage portion. Being 
 
 There is also a big hole in this test, the academic literature that never made it into MAG. A future test could include randomly pulling data from other sources such as CrossRef but for now since MAG is the [largest database outside of Google Scholar](https://link.springer.com/article/10.1007/s11192-020-03690-4) this was the best I could do for now.
 
-## Results
-
 I'm going to drop a bunch of numbers on you so you now so you can draw your own conclusions. I've also posted the sqlite database with the raw numbers so you can do your own queries.
 
-### Summary Data
+## Summary Data
 
 The first table is simple summary data cut a few different ways. The first column of data is all of the items we found in Inciteful. It doesn't equal 100k exactly because I did the random number generation from the ID database I maintain. This database contains all of the historical IDs as well as the current ones. Over time MAG drops items from it's DB for various reasons. So in this instance ~3.7% of the IDs in my database were dropped by MAG. The second and third are the same as the first except filtering to The Lens and Semantic Scholar respectively. The final column filters down to papers which have any sort of citation data from any source, as those are the papers I'm most interested in.
 
@@ -104,11 +102,11 @@ The first table is simple summary data cut a few different ways. The first colum
 
 On a surface level it's clear that there is a big gap in the number of papers which Inciteful found vs the others. I'll dive more into that [later](#missing-papers) but making a long story short it is because MAG includes patents whereas The Lens and SS do not (The Lens does but from a different API).
 
-### Citation Coverage
+## Citation Coverage
 
 I'm most interested in the last column. I want to look at papers which have some sort of citation data associated with them. Papers which don't have any citations or references are pretty useless to Inciteful as I cannot build a graph without them. Ideally the more citations the better.
 
-### Missing Papers
+## Missing Papers
 
 |             | All        |             |             | Lens Missing |            |            | SS Missing |            |             |
 | ----------- | ---------- | ----------- | ----------- | ------------ | ---------- | ---------- | ---------- | ---------- | ----------- |
@@ -127,3 +125,15 @@ I'm most interested in the last column. I want to look at papers which have some
 Combining:
 https://academic.microsoft.com/paper/3020022875/
 https://academic.microsoft.com/paper/3035702361/
+
+# 2. Data Structure
+
+# 3. Data Freshness
+
+# 4. Updated Data Accessibility
+
+# 5. Data Enrichment
+
+# 6. Other API Features
+
+## Search

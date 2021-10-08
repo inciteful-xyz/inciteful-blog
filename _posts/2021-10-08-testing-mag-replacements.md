@@ -161,10 +161,7 @@ There are some instances where The Lens outperforms Semantic Scholar, but almost
 For the data structure piece I am looking into how they are presenting the standard data that is associated with a paper.  That means authors, affiliations, URLs, etc.  I'll try to dive into each here.  In the [next section](#3-data-enrichment) I'll cover data enrichments  
 
 ## Paper Data
-To start off I'll focus on the paper specific data and present it in table form for easier consumption.  Here are the links to the data structures for those that are interested in digging deeper. 
-
-- [Semantic Scholar](https://api.semanticscholar.org/graph/v1)
-- [The Lens](https://docs.api.lens.org/response-scholar.html)
+To start off I'll focus on the paper specific data and present it in table form for easier consumption.
 
 |                                   | The Lens                          | Semantic Scholar                |
 | --------------------------------- | --------------------------------- | ------------------------------- |
@@ -180,9 +177,16 @@ To start off I'll focus on the paper specific data and present it in table form 
 Clearly The Lens offers more basic data in their response than Semantic Scholar does.  It's enough to construct a citation if that's the type of service you are looking to build.  Semantic Scholar, on the other hand, is relatively spartan in comparison.  
 
 A big call out I want to make here is that through Semantic Scholar's API, the only URL you get to a paper is the one to Semantic Scholar's site.  While I understand why they are doing it, to drive more eyeballs to their site from sites that use their data, it does add friction between either Semantic Scholar and the site/tool builder or between the site and the user.  There are easy ways around this for papers with external IDS like a DOI, PubMedID or arXiv ID.  
+
+ Here are the links to the data structures for those that are interested in digging deeper. 
+
+- [Semantic Scholar](https://api.semanticscholar.org/graph/v1)
+- [The Lens](https://docs.api.lens.org/response-scholar.html)
+
 ## Author Data
 
 For Author data on the other hand, Semantic Scholar seems to offer a bit more. 
+
 |                                                                                             | The Lens                 | Semantic Scholar                                                                                                                              |
 | ------------------------------------------------------------------------------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | Name                                                                                        | Separate first/last name | Full name and aliases                                                                                                                         |

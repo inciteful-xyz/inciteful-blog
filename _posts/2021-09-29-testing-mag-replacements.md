@@ -178,6 +178,8 @@ To start off I'll focus on the paper specific data and present it in table form 
 | Date                              | Date published and date inserted  | Year Published                  |
 
 Clearly The Lens offers more basic data in their response than Semantic Scholar does.  It's enough to construct a citation if that's the type of service you are looking to build.  Semantic Scholar, on the other hand, is relatively spartan in comparison.  
+
+A big call out I want to make here is that through Semantic Scholar's API, the only URL you get to a paper is the one to Semantic Scholar's site.  While I understand why they are doing it, to drive more eyeballs to their site from sites that use their data, it does add friction between either Semantic Scholar and the site/tool builder or between the site and the user.  There are easy ways around this for papers with external IDS like a DOI, PubMedID or arXiv ID.  
 ## Author Data
 
 For Author data on the other hand, Semantic Scholar seems to offer a bit more. 
@@ -213,7 +215,7 @@ Semantic Scholar's data enrichment focuses more on text mining and NLP.
 
 The types of enrichments available vary pretty widely between the two so, depending on your use case, one may work better for you. 
 # 4. Updated Data Accessibility
-This one is a pretty specific use case but it's something that most people ingesting the data on a regular basis will need to think about.  How do I ensure I have the most up to date data?  For Inciteful I need to preprocess the data and ingest it into my custom data store, this means I can't really use the API for the bulk of my requirements.
+This one is a pretty specific use case but it's something that most people ingesting the data on a regular basis will need to think about.  How do I ensure I have the most up to date data?  For Inciteful I need to pre-process the data and ingest it into my custom data store, this means I can't really use the API for the bulk of my requirements.
 ## Data Dumps
 To start, both do regular data dumps.  Semantic Scholar has [monthly downloads](https://api.semanticscholar.org/corpus/download/) available to everyone.  I was told that The Lens will do data dumps but you have to request special access.  
 
@@ -222,11 +224,121 @@ I don't have access to a Lens data dump so I can't comment on it.  But the downs
 ## Update Data Through the API
 Once you have downloaded a data dump, it would be nice to just be able to hit the API for the most recently changed data rather than download the entire dump once again.  This is how the Crossref API works by default.  The Lens allows you to do that in a round about way through their search API (more on that below) but Semantic Scholar does not.  You can only search papers by keyword or by ID.  That makes it hard to find out about the new papers you've never seen before.  
 # 5. API Features
+Each service has taken a different approach to building their API.  You can see each of their API home pages here:
 
+- [The Lens](https://docs.api.lens.org/getting-started.html)
+- [Semantic Scholar](https://www.semanticscholar.org/product/api)
 
-## Search
+Both The Lens and Semantic Scholar have API endpoints where you can query a specific paper:
+
+- The Lens: https://api.lens.org/scholarly/{lens_id}
+- Semantic Scholar: https://api.semanticscholar.org/graph/v1/paper/{paper_id}
+
+From here this is where they really diverge.  
+
+## The Lens
+To start you have to apply for an API key, I ended up getting one with a monthly API limit of 10,000 requests.  That's fine for Inciteful because the full text search is a side feature that very few people actually use on the site.  With your API key you have access to their search endpoint.
+
+Their search endpoint is basically an exposed Elastic Search Cluster that contains their entire corpus.  You can see the documentation [here](https://docs.api.lens.org/request-scholar.html).  But in the end there are a few outcomes from this:  
+
+- You can query the hell out of it in pretty much any way you want
+- It's fast but not as fast as a purpose-built endpoint
+- It's complicated to get what you want out of it
+
+For example, you can do a full text search across the entire corpus relatively quickly, but the results  multi-word queries are pretty bad because, by default, elastic search does an `OR` boolean search on the multiple words.  It also does not give extra weight to those items which contain both words let alone items that contain both words next to each other.  In addition to the above problems, it will also do a full text search across every field.  This includes field of study, journal title, author names, etc.  So be sure to specify which fields you want to search. 
+
+The query I ended up with when using the full text search on Inciteful was: 
+
+```json
+{
+    "size": "{{size}}",
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "query_string": {
+                        "fields": [
+                            "title"
+                        ],
+                        "query": "{{lensSearch}}",
+                        "default_operator": "OR"
+                    }
+                }
+            ],
+            "should": [
+                {
+                    "query_string": {
+                        "fields": [
+                            "title^10",
+                            "abstract"
+                        ],
+                        "query": "{{lensSearch}}",
+                        "default_operator": "AND"
+                    }
+                },
+                {
+                    "query_string": {
+                        "fields": [
+                            "title^100",
+                            "abstract^5"
+                        ],
+                        "query": "{{lensSearch}}",
+                        "type": "phrase",
+                        "phrase_slop": 100
+                    }
+                }
+            ]
+        }
+    },
+    "include": [
+        "lens_id",
+        "title",
+        "abstract",
+        "external_ids"
+    ]
+}
+```
+I'm not an Elastic Search guru, I know I can improve the query, I just don't know how. So just remember:
+
+"With great power comes great complexity" - (I'm sure someone said that sometime)
+
+## Semantic Scholar
+In the Semantic Scholar API endpoints, the `paper_id` can be any of the following (taken from the documentation):
+
+- `<sha>` - a Semantic Scholar ID, e.g. `649def34f8be52c8b66281af98ae884c09aef38b`
+- `CorpusId:<id>` - Semantic Scholar numerical ID, e.g. `215416146`
+- `DOI:<doi>` - a Digital Object Identifier, e.g. `DOI:10.18653/v1/N18-3011`
+- `ARXIV:<id>` - arXiv.rg, e.g. `ARXIV:2106.15928`
+- `MAG:<id>` - Microsoft Academic Graph, e.g. `MAG:112218234`
+- `ACL:<id>` - Association for Computational Linguistics, e.g. `ACL:W12-3903`
+- `PMID:<id>` - PubMed/Medline, e.g. `PMID:19872477`
+- `PMCID:<id>` - PubMed Central, e.g. `PMCID:2323736`
+- `URL:<url>` - URL from one of the sites listed below, e.g. `URL:https://arxiv.org/abs/2106.15928v1`
+
+So you don't need to know the Semantic Scholar ID to use the **individual paper** API like you do with The Lens (you can use Elastic Search endpoint to query the external IDs though).
+
+From here Semantic Scholar offers a few additional options outside of just the paper endpoint:
+
+- A keyword search
+- An author endpoint (more information about an author)
+- An author's papers endpoint (all of the papers written by an author)
+- A paper's citations and references endpoints (get information about all the papers citing or cited by the paper in question)
+
+There is a bit of complexity in understanding what data you can get from which endpoint.  For example, you can only get a subset of the information about a paper from the keyword search endpoint that you can get from the actual single paper endpoint.  But you can only get a subset of the information about the citations or references from the single paper endpoint, for more info like `intents` and `contexts`, you need to hit the paper's citation and reference endpoints individually.  
+
+I'm not going to go through the details of each endpoint, but I will highlight a few things.  
+
+Starting with the keyword search endpoint, it's dead simple: 
+
+  - `https://api.semanticscholar.org/graph/v1/paper/search?query=covid+vaccination`
+
+In addition to that, the results are what you get on their own site, so you know they are good.  
+
+The author endpoint allows you to get information about a specific author and see all the papers from a specific author.  But just like with the keyword search and paper endpoints, you can only see a subset of the information unless you use the "Author's papers" endpoint.  Don't shoot the messenger.
 
 # Conclusion
+Congrats if you've made it this far.  If you read everything, I'm sure you've drawn your own conclusions about what is best for your use case.  There are clearly pros and cons with each and there is no right answer.  But if I had to read between the lines about who is most likely to pick up the torch and carry it after MAG, I think it will most likely be Semantic Scholar.  While there are a number of downsides to Semantic Scholar (fewer available fields, less powerful API, etc), it seems to me like they have done the leg work to be able to keep running when MAG shuts down.  At each point they have demonstrated that they have their own independent infrastructure that exists separate from MAG.  They have built their own paper disambiguation, author disambiguation, citation context extraction, and citation intent analyzer.  They also don't seem to guard their data as closely as The Lens, which will be important 
+
 SS has more citation coverage
 SS has better infrastructure to take the torch from MAG
 SS is working on their own algos

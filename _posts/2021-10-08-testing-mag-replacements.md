@@ -1,7 +1,7 @@
 ---
 title: Testing Replacements for Microsoft Academic Graph
 author: Michael Weishuhn
-date: 2021-09-29 18:32:00 -0000
+date: 2021-10-08 14:32:00 -0000
 categories: [data]
 tags: [data, MAG, The Lens, Semantic Scholar]
 ---
@@ -242,7 +242,7 @@ To start you have to apply for an API key, I ended up getting one with a monthly
 Their search endpoint is basically an exposed Elastic Search Cluster that contains their entire corpus.  You can see the documentation [here](https://docs.api.lens.org/request-scholar.html).  But in the end there are a few outcomes from this:  
 
 - You can query the hell out of it in pretty much any way you want
-- It's fast but not as fast as a purpose-built endpoint
+- It's not as fast as a purpose-built endpoint
 - It's complicated to get what you want out of it
 
 For example, you can do a full text search across the entire corpus relatively quickly, but the results  multi-word queries are pretty bad because, by default, elastic search does an `OR` boolean search on the multiple words.  It also does not give extra weight to those items which contain both words let alone items that contain both words next to each other.  In addition to the above problems, it will also do a full text search across every field.  This includes field of study, journal title, author names, etc.  So be sure to specify which fields you want to search. 
@@ -303,21 +303,9 @@ I'm not an Elastic Search guru, I know I can improve the query, I just don't kno
 "With great power comes great complexity" - (I'm sure someone said that sometime)
 
 ## Semantic Scholar
-In the Semantic Scholar API endpoints, the `paper_id` can be any of the following (taken from the documentation):
+You can play around with the Semantic Scholar endpoint without a key, you'll just be subject to a low rate limit.  When I applied for my key my rate limit was something like 100 requests/second. Woo hoo! 
 
-- `<sha>` - a Semantic Scholar ID, e.g. `649def34f8be52c8b66281af98ae884c09aef38b`
-- `CorpusId:<id>` - Semantic Scholar numerical ID, e.g. `215416146`
-- `DOI:<doi>` - a Digital Object Identifier, e.g. `DOI:10.18653/v1/N18-3011`
-- `ARXIV:<id>` - arXiv.rg, e.g. `ARXIV:2106.15928`
-- `MAG:<id>` - Microsoft Academic Graph, e.g. `MAG:112218234`
-- `ACL:<id>` - Association for Computational Linguistics, e.g. `ACL:W12-3903`
-- `PMID:<id>` - PubMed/Medline, e.g. `PMID:19872477`
-- `PMCID:<id>` - PubMed Central, e.g. `PMCID:2323736`
-- `URL:<url>` - URL from one of the sites listed below, e.g. `URL:https://arxiv.org/abs/2106.15928v1`
-
-So you don't need to know the Semantic Scholar ID to use the **individual paper** API like you do with The Lens (you can use Elastic Search endpoint to query the external IDs though).
-
-From here Semantic Scholar offers a few additional options outside of just the paper endpoint:
+Semantic Scholar offers a few additional options outside of just the paper endpoint:
 
 - A keyword search
 - An author endpoint (more information about an author)
@@ -337,9 +325,6 @@ In addition to that, the results are what you get on their own site, so you know
 The author endpoint allows you to get information about a specific author and see all the papers from a specific author.  But just like with the keyword search and paper endpoints, you can only see a subset of the information unless you use the "Author's papers" endpoint.  Don't shoot the messenger.
 
 # Conclusion
-Congrats if you've made it this far.  If you read everything, I'm sure you've drawn your own conclusions about what is best for your use case.  There are clearly pros and cons with each and there is no right answer.  But if I had to read between the lines about who is most likely to pick up the torch and carry it after MAG, I think it will most likely be Semantic Scholar.  While there are a number of downsides to Semantic Scholar (fewer available fields, less powerful API, etc), it seems to me like they have done the leg work to be able to keep running when MAG shuts down.  At each point they have demonstrated that they have their own independent infrastructure that exists separate from MAG.  They have built their own paper disambiguation, author disambiguation, citation context extraction, and citation intent analyzer.  They also don't seem to guard their data as closely as The Lens, which will be important 
+Congrats if you've made it this far.  If you read everything, I'm sure you've drawn your own conclusions about what is best for your use case.  There are clearly pros and cons with each and there is no perfect answer.  But if I had to read between the lines about who is most likely to pick up the torch and carry it after MAG, I think it will most likely be Semantic Scholar.  While there are a number of downsides to Semantic Scholar (fewer available fields, less powerful API, etc), it seems to me like they have done the leg work to be able to keep running when MAG shuts down.  At each point they have demonstrated that they have their own independent infrastructure which exists separate from MAG.  They have built their own paper disambiguation, author disambiguation, citation context extraction, and citation intent analyzer.  They also don't seem to guard their data as closely as The Lens (higher API limits, public data dumps, etc).  But all that being said, the ecosystem is lucky to have both and I am very grateful for what each adds to it.  None of our tools would be possible without all the hard work they have done along with the others like Crossref, OpenCitations, the I4OC, Unpaywall, ROR, ORCID, etc.
 
-SS has more citation coverage
-SS has better infrastructure to take the torch from MAG
-SS is working on their own algos
-Missing patent data
+Finally, while it's incredibly sad that MAG is shutting down but they did the world a huge services by proving the value of enriched/open metadata delivered in a consistent manner with high level of service and professionalism.  I have high hopes that the community will pick up where they left off.  It will take some time for the community to reach parity with MAG but the will is there.  I look forward to seeing where the next few years takes us.  

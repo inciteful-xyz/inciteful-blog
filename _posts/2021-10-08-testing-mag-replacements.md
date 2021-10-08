@@ -97,6 +97,7 @@ The first table is simple summary data cut a few different ways. The first colum
 | ss_more_cits_than_lens     | 14,795       | 14,795     | 14,795   | 14,795       | 14,795             |
 | lens_more_refs_than_ss     | 7,640        | 7,640      | 7,640    | 7,640        | 7,640              |
 | ss_more_refs_than_lens     | 12,872       | 12,873     | 12,873   | 12,873       | 12,873             |
+
 ## Paper Coverage
 On a surface level it's clear that there is a big gap in the number of papers which Inciteful found vs the others. The data is below but, making a long story short, it is because MAG includes patents whereas The Lens and SS do not (The Lens does but from a different API).
 
@@ -129,6 +130,7 @@ Speculating, by looking at the numbers, it seems as though the Lens tries to kee
 A large portion of these are recent, so we can possibly chalk those up to a timing issue where The Lens has not yet updated their database.   The rest are a rounding error for our purposes.
 
 Semantic Scholar on the other hand has a **lot** more missing ~7,000 papers when not accounting for patents.  When I inquired about this, the response I got was that they have filtering when importing data which tries to look for "non-scientific" or gray literature and stops it from entering the index.  So basically they have stricter criteria than MAG for what constitutes academic literature.  Which makes sense and is actually a good thing because once MAG goes away, they are going to already have an opinion as to what to index when they encounter something new.  In a related note, Semantic Scholar is also doing other things like paper disambiguation which made tracking everything down a bit more complicated.  For example with this paper from arXiv MAG indexes both the [actual article](https://academic.microsoft.com/paper/3020022875/) as well as the [conference proceeding](https://academic.microsoft.com/paper/3035702361/).  So it's possible they are also doing other disambiguation which I missed.  In line with them maintaining their own index rather than mirroring it (like Inciteful), it looks as though they have "found" a ~1,700 papers that Inciteful did not as a result of the papers being dropped from MAG. 
+
 ## Citation Coverage
 I'm most interested in the last column of the summary table (replicated in part below). I want to look at papers which have some sort of citation data associated with them. Papers which don't have any citations or references are pretty useless to Inciteful as I cannot build a graph without them. Ideally the more citations the better.  Also, while patent data is nice to have, it [doesn't seem terribly important](https://twitter.com/Inciteful_xyz/status/1438811333265330183) to my users.
 

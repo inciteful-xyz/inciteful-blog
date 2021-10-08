@@ -195,6 +195,7 @@ For Author data on the other hand, Semantic Scholar seems to offer a bit more.
 | [Affiliation Data](https://www.digital-science.com/press-release/grid-passes-torch-to-ror/) | Yes, including grid/ror  | Yes, including grid/ror                                                                                                                       |
 | Structured IDs                                                                              | Yes, the author's MAG ID | Yes, using [own disambiguation](https://medium.com/ai2-blog/s2and-an-improved-author-disambiguation-system-for-semantic-scholar-d09380da30e6) |
 | URL                                                                                         | No                       | Semantic Scholar URL and author's homepage                                                                                                    |
+
 ## Other Data
 In terms of "other data", The Lens offers a bunch of other information like publisher information, ISSNs, and [MeSH](https://en.wikipedia.org/wiki/Medical_Subject_Headings) terms that Semantic Scholar does not. 
 

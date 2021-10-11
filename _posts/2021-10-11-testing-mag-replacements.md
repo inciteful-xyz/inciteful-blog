@@ -1,7 +1,7 @@
 ---
 title: Testing Replacements for Microsoft Academic Graph
 author: Michael Weishuhn
-date: 2021-10-08 14:32:00 -0000
+date: 2021-10-11 12:32:00 -0000
 categories: [data]
 tags: [data, MAG, The Lens, Semantic Scholar]
 ---
@@ -65,9 +65,11 @@ The main part of the test is going to be evaluating the coverage portion. Being 
 
 There is also a big hole in this test, the academic literature that never made it into MAG. A future test could include randomly pulling data from other sources such as CrossRef but for now, since MAG is the [largest database outside of Google Scholar](https://link.springer.com/article/10.1007/s11192-020-03690-4), this was the best I could do without adding a bunch of extra work.
 ## Summary Data
-I'm going to drop a bunch of numbers so you can draw your own conclusions. I've also posted the sqlite database with the raw numbers so you can do your own queries.
+I'm going to drop a bunch of numbers so you can draw your own conclusions. I've also posted the [source sqlite database and related queries](https://github.com/inciteful-xyz/inciteful-blog/tree/main/assets/posts/mag-replacements) so you can do your own analysis.
 
 The first table is simple summary data cut a few different ways. The first column of data is all of the items we found in Inciteful. It doesn't equal 100k exactly because I did the random number generation from the ID database I maintain. This database contains all of the historical IDs as well as the current ones. Over time MAG drops items from it's DB for various reasons. So in this instance ~3.7% of the IDs in my database were dropped by MAG. The second and third columns filter results to only those papers found by The Lens and Semantic Scholar respectively. The fourth column filters down to papers which have any sort of citation data from any source.  The final is non-patent papers with citation data, as those are the papers I'm most interested in.
+
+If you are reading this on a mobile device, be aware that the tables may be able to scroll horizontally.
 
 |                            | Incite Found | Lens Found | SS Found | Has Cit Data | Has Cit &<br />Non-Pat. |
 | -------------------------- | ------------ | ---------- | -------- | ------------ | ----------------------- |
@@ -108,12 +110,12 @@ On a surface level it's clear that there is a big gap in the number of papers wh
 | Conference  | 1,891      | 21,872      | 20,933      | 7                      | 69         | 83         | 101                  | 61         | 910         |
 | Dataset     | 39         | 5           | 0           | 0                      | 0          | 0          | 18                   | 1          | 0           |
 | Journal     | 32,453     | 510,423     | 460,603     | 224                    | 2,699      | 4,825      | 1,257                | 5,483      | 19,033      |
-| Patent      | 23,679     | 68,734      | 72,575      | 23,679                 | 68,734     | 72,575     | 22,181               | 68,535     | 72,237      |
+| **Patent**  | 23,679     | 68,734      | 72,575      | **23,679**             | 68,734     | 72,575     | **22,181**           | 68,535     | 72,237      |
 | Repository  | 1,776      | 5,747       | 18,708      | 122                    | 1,170      | 3,271      | 429                  | 1,630      | 3,792       |
 | Thesis      | 2,168      | 934         | 11,994      | 14                     | 0          | 0          | 258                  | 18         | 536         |
 | **Total**   | **96,331** | **659,948** | **683,193** | **24,234**             | **72,777** | **81,173** | **29,598**           | **78,955** | **100,705** |
 
-Speculating, by looking at the numbers, it seems as though the Lens tries to keep their data as close as possible to the MAG and maybe does not get involved with disambiguation, etc.  Looking at the second column of the summary table seems to support this, any paper which was found by The Lens was also found by Inciteful (with a few exceptions).  Analyzing when the non-patent papers missing from the Lens were created:
+Speculating, it seems as though the Lens tries to keep their data as close as possible to the MAG and maybe does not get involved with disambiguation, etc.  Looking at the second column of the summary table seems to support this, any paper which was found by The Lens was also found by Inciteful (with a few exceptions).  Analyzing when the non-patent papers missing from the Lens were created:
 
 | YEAR | #   |
 | ---- | --- |
@@ -125,9 +127,11 @@ Speculating, by looking at the numbers, it seems as though the Lens tries to kee
 | 2020 | 97  |
 | 2021 | 254 |
 
-A large portion of these are recent, so we can possibly chalk those up to a timing issue where The Lens has not yet updated their database.   The rest are a rounding error for our purposes.
+A large portion of these are recent, so we can possibly chalk those up to a timing issue where The Lens has not yet updated their database. The rest are a rounding error for our purposes.
 
-Semantic Scholar on the other hand has a **lot** more missing ~7,000 papers when not accounting for patents.  When I inquired about this, the response I got was that they have filtering when importing data which tries to look for "non-scientific" or gray literature and stops it from entering the index.  So basically they have stricter criteria than MAG for what constitutes academic literature.  Which makes sense and is actually a good thing because once MAG goes away, they are going to already have an opinion as to what to index when they encounter something new.  In a related note, Semantic Scholar is also doing other things like paper disambiguation which made tracking everything down a bit more complicated.  For example with this paper from arXiv MAG indexes both the [actual article](https://academic.microsoft.com/paper/3020022875/) as well as the [conference proceeding](https://academic.microsoft.com/paper/3035702361/).  So it's possible they are also doing other disambiguation which I missed.  In line with them maintaining their own index rather than mirroring it (like Inciteful), it looks as though they have "found" a ~1,700 papers that Inciteful did not as a result of the papers being dropped from MAG. 
+Semantic Scholar on the other hand has a **lot** more missing (~7,000 papers) after removing patents.  When I inquired about this, the response I got was that, upon ingestion, they have a filter which tries to look for "non-scientific" or gray literature and which stops the paper from entering the index.  So basically they have stricter criteria than MAG for what constitutes academic literature.  Which makes sense and is actually a good thing because once MAG goes away, they are going to already have an opinion as to what to index when they encounter something new.  
+
+Semantic Scholar is also doing other things like paper disambiguation which made tracking everything down a bit more complicated.  For example, with this paper from arXiv, MAG indexes both the [actual article](https://academic.microsoft.com/paper/3020022875/) as well as the [conference proceeding](https://academic.microsoft.com/paper/3035702361/).  So it's possible they are also doing other disambiguation which I missed.  In line with them maintaining their own index rather than mirroring it (like Inciteful), it looks as though they have "found" a ~1,700 papers that Inciteful did not as a result of the papers being dropped from MAG. 
 
 ## Citation Coverage
 I'm most interested in the last column of the summary table (replicated in part below). I want to look at papers which have some sort of citation data associated with them. Papers which don't have any citations or references are pretty useless to Inciteful as I cannot build a graph without them. Ideally the more citations the better.
@@ -145,7 +149,7 @@ I'm most interested in the last column of the summary table (replicated in part 
 | ss_refs      | 802,676            |
 | incite_refs  | 610,618            |
 
-The first thing that jumps out is the fact that, across the board, Semantic Scholar has 17% more citations and 23% more references than The Lens, which in turn has more than Inciteful.  This second point is particularly interesting because that means that The Lens is not just mirroring the citation data that it gets from MAG like it seems to be doing for paper data.  It's actually enriching it from other sources.  Semantic Scholar is clearly doing the same thing. 
+The first thing that jumps out is the fact that Semantic Scholar has 17% more citations and 23% more references than The Lens, which in turn has more than Inciteful.  This second point is particularly interesting because that means that The Lens is not just mirroring the citation data that it gets from MAG like it seems to be doing for paper data.  It's actually enriching it from other sources.  Semantic Scholar is enriching the data as well. 
 
 Digging into the actual comparison between The Lens and Semantic Scholar:
 
@@ -156,9 +160,9 @@ Digging into the actual comparison between The Lens and Semantic Scholar:
 | lens_more_refs_than_ss | 7,640              |
 | ss_more_refs_than_lens | 12,873             |
 
-There are some instances where The Lens outperforms Semantic Scholar, but almost twice as often, it's Semantic Scholar that has more citation data than The Lens. 
+There are some instances where The Lens outperforms Semantic Scholar, but almost twice as often, it's Semantic Scholar that has more citation/reference data. 
 # 2. Data Structure
-For the data structure piece I am looking into how they are presenting the standard data that is associated with a paper.  That means authors, affiliations, URLs, etc.  I'll try to dive into each here.  In the [next section](#3-data-enrichment) I'll cover data enrichments  
+For the data structure piece I am looking into how they are presenting the standard data that is associated with a paper.  That means authors, affiliations, URLs, etc.  I'll try to dive into each here.  In the [next section](#3-data-enrichment) I'll cover data enrichments that are not found in MAG.
 
 ## Paper Data
 To start off I'll focus on the paper specific data and present it in table form for easier consumption.
@@ -174,9 +178,9 @@ To start off I'll focus on the paper specific data and present it in table form 
 | Other Info                        | Page numbers, volumes, and issues | No                              |
 | Date                              | Date published and date inserted  | Year Published                  |
 
-Clearly The Lens offers more basic data in their response than Semantic Scholar does.  It's enough to construct a citation if that's the type of service you are looking to build.  Semantic Scholar, on the other hand, is relatively spartan in comparison.  
+Clearly The Lens offers more basic data in their response than Semantic Scholar does.  It's enough to construct a citation if that's the type of service you are looking to build.  Semantic Scholar, in comparison, is relatively spartan.  
 
-A big call out I want to make here is that through Semantic Scholar's API, the only URL you get to a paper is the one to Semantic Scholar's site.  While I understand why they are doing it, to drive more eyeballs to their site from sites that use their data, it does add friction between either Semantic Scholar and the site/tool builder or between the site and the user.  There are easy ways around this for papers with external IDS like a DOI, PubMedID or arXiv ID.  
+A big call out I want to make here is that through Semantic Scholar's API, the only URL you get to a paper is the one to Semantic Scholar's site.  While I understand why they are doing it, to drive more eyeballs to their site from sites that use their data, it does add friction between either Semantic Scholar and the site/tool builder or between the site and the user.  There are easy ways around this for papers with external IDS like a DOI, PubMedID or arXiv ID.
 
  Here are the links to the data structures for those that are interested in digging deeper. 
 
@@ -195,12 +199,12 @@ For Author data on the other hand, Semantic Scholar seems to offer a bit more.
 | URL                                                                                         | No                       | Semantic Scholar URL and author's homepage                                                                                                    |
 
 ## Other Data
-In terms of "other data", The Lens offers a bunch of other information like publisher information, ISSNs, and [MeSH](https://en.wikipedia.org/wiki/Medical_Subject_Headings) terms that Semantic Scholar does not. 
+In terms of "other data", The Lens offers a bunch of other information like publisher information, ISSNs, and [MeSH](https://en.wikipedia.org/wiki/Medical_Subject_Headings) terms that Semantic Scholar does not. None of which is useful for my purposes but could be for yours.
 
 # 3. Data Enrichment
-To me a "data enrichment" is something that the service calculates and serves up as part of their API.  For me, this needs to be above and beyond what MAG provides.  
+To me a "data enrichment" is something that the service constructs and serves up as part of their API, above and beyond what MAG provides.  
 
-The Lens enriches their data by pulling in structured data from other sources.  Where possible the identify and present:
+The Lens enriches their data by pulling in structured data from other sources.  Where possible they identify and present:
 
 - Funding sources
 - Clinical trials
@@ -209,9 +213,10 @@ The Lens enriches their data by pulling in structured data from other sources.  
 - Author's ORCID IDs
 - Abstracts
 
-Semantic Scholar's data enrichment focuses more on text mining and NLP.  
+Semantic Scholar's data enrichment focuses more on text mining and NLP.  I think Semantic Scholar has a leg up here given the partnerships they have with large publishers which in turn gives them access to the full text of a lot of articles that are not Open Access. 
+
 - Identify "[influential citations](https://www.semanticscholar.org/paper/Identifying-Meaningful-Citations-Valenzuela-Ha/1c7be3fc28296a97607d426f9168ad4836407e4b)"
-- Developed [author disambiguation](https://medium.com/ai2-blog/s2and-an-improved-author-disambiguation-system-for-semantic-scholar-d09380da30e6)
+- [Author disambiguation](https://medium.com/ai2-blog/s2and-an-improved-author-disambiguation-system-for-semantic-scholar-d09380da30e6)
 - Citation contexts (the text surrounding the citation in a paper)
 - [Citation intents](https://medium.com/ai2-blog/citation-intent-classification-bd2bd47559de)
 - [Specter Embeddings](https://www.semanticscholar.org/paper/SPECTER%3A-Document-level-Representation-Learning-Cohan-Feldman/a3e4ceb42cbcd2c807d53aff90a8cb1f5ee3f031) - A vector representation of the document
@@ -224,7 +229,7 @@ This one is a pretty specific use case but it's something that most people inges
 ## Data Dumps
 To start, both do regular data dumps.  Semantic Scholar has [monthly downloads](https://api.semanticscholar.org/corpus/download/) available to everyone.  I was told that The Lens will do data dumps but you have to request special access.  
 
-I don't have access to a Lens data dump so I can't comment on it.  But the downside to using the Semantic Scholar data dump is that (as of this writing) none of the above enrichments, outside of the abstract, are actually in the data dump.  You need to hit the API to get them.  Which is a problem, since I could really beef up the functionality of the site with them but I need them locally.  I'm not sure how they would feel about me hitting the API a couple of hundred of million times to get the data :) 
+I don't have access to a Lens data dump so I can't comment on it.  But the downside to using the Semantic Scholar data dump is that (as of this writing) none of the above enrichments, outside of the abstract, are actually in the data dump.  You need to hit the API to get them.  Which is a problem, since I could really beef up the functionality of the site that data but I need have access to it locally.  I'm not sure how they would feel about me hitting the API a couple of hundred of million times to get the data :) 
 
 ## Update Data Through the API
 Once you have downloaded a data dump, it would be nice to just be able to hit the API for the most recently changed data rather than download the entire dump once again.  This is how the Crossref API works by default.  The Lens allows you to do that in a round about way through their search API (more on that below) but Semantic Scholar does not.  You can only search papers by keyword or by ID.  That makes it hard to find out about the new papers you've never seen before.  
@@ -246,11 +251,11 @@ To start you have to apply for an API key, I ended up getting one with a monthly
 
 Their search endpoint is basically an exposed Elastic Search Cluster that contains their entire corpus.  You can see the documentation [here](https://docs.api.lens.org/request-scholar.html).  But in the end there are a few outcomes from this:  
 
-- You can query the hell out of it in pretty much any way you want
+- You can query in pretty much any way you want
 - It's not as fast as a purpose-built endpoint
 - It's complicated to get what you want out of it
 
-For example, you can do a full text search across the entire corpus relatively quickly, but the results  multi-word queries are pretty bad because, by default, elastic search does an `OR` boolean search on the multiple words.  It also does not give extra weight to those items which contain both words let alone items that contain both words next to each other.  In addition to the above problems, it will also do a full text search across every field.  This includes field of study, journal title, author names, etc.  So be sure to specify which fields you want to search. 
+According to their docs, there are 61 searchable fields and 13 pre-defined filters.  Giving you a lot of flexibility. But that doesn't come without it's own problems.  For example, you can do a full text search across the entire corpus relatively quickly, but the results for multi-word queries are pretty bad because, by default, elastic search does an `OR` boolean search on the multiple keywords.  It also does not give extra weight to those items which contain both words let alone items that contain both words next to each other.  In addition to the above problems, it will also do a full text search across every field.  This includes field of study, journal title, author names, etc.  So be sure to specify which fields you want to search and how important each of the fields are.
 
 The query I ended up with when using the full text search on Inciteful was: 
 
@@ -330,6 +335,10 @@ In addition to that, the results are what you get on their own site, so you know
 The author endpoint allows you to get information about a specific author and see all the papers from a specific author.  But just like with the keyword search and paper endpoints, you can only see a subset of the information unless you use the "Author's papers" endpoint.  Don't shoot the messenger.
 
 # Conclusion
-Congrats if you've made it this far.  If you read everything, I'm sure you've drawn your own conclusions about what is best for your use case.  There are clearly pros and cons with each and there is no perfect answer.  But if I had to read between the lines about who is most likely to pick up the torch and carry it after MAG, I think it will most likely be Semantic Scholar.  While there are a number of downsides to Semantic Scholar (fewer available fields, less powerful API, etc), it seems to me like they have done the leg work to be able to keep running when MAG shuts down.  At each point they have demonstrated that they have their own independent infrastructure which exists separate from MAG.  They have built their own paper disambiguation, author disambiguation, citation context extraction, and citation intent analyzer.  They also don't seem to guard their data as closely as The Lens (higher API limits, public data dumps, etc).  But all that being said, the ecosystem is lucky to have both and I am very grateful for what each adds to it.  None of our tools would be possible without all the hard work they have done along with the others like Crossref, OpenCitations, the I4OC, Unpaywall, ROR, ORCID, etc.
+Congrats if you've made it this far.  If you read everything, I'm sure you've drawn your own conclusions about what is best for your use case.  There are clearly pros and cons with each and there is no perfect answer.  
 
-Finally, while it's incredibly sad that MAG is shutting down but they did the world a huge services by proving the value of enriched/open metadata delivered in a consistent manner with high level of service and professionalism.  I have high hopes that the community will pick up where they left off.  It will take some time for the community to reach parity with MAG but the will is there.  I look forward to seeing where the next few years takes us.  
+But if I had to break out my crystal ball to say who is most likely to pick up the torch and carry it after MAG, I think it will most likely be Semantic Scholar.  While there are a number of downsides to Semantic Scholar (fewer available fields, less powerful API, etc), it seems to me like they have done the leg work to be able to keep running when MAG shuts down.  At each point they have demonstrated that they have their own independent infrastructure which exists separate from MAG.  They have built their own paper disambiguation, author disambiguation, citation context extraction, and citation intent analyzer.  They have established partnerships directly with publishers for better access to non-OA papers.  They also don't seem to guard their data as closely as The Lens (higher API limits, public data dumps, etc).  
+
+But all that being said, the ecosystem is lucky to have both and I am very grateful for what each adds to it.  None of our tools would be possible without all the hard work they have done along with the others like Crossref, OpenCitations, the I4OC, Unpaywall, ROR, ORCID, etc.
+
+Finally, while it's incredibly sad that MAG is shutting down, they did the world a huge services by proving the value of enriched/open metadata delivered in a consistent manner with high level of service and professionalism.  I have high hopes that the community will pick up where they left off.  It will take some time for the community to reach parity with MAG but the will is there.  I look forward to seeing where the next few years takes us.  

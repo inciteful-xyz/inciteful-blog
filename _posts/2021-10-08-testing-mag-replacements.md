@@ -6,34 +6,19 @@ categories: [data]
 tags: [data, MAG, The Lens, Semantic Scholar]
 ---
 
-As we've all heard, [Microsoft Academic is shutting down](https://www.microsoft.com/en-us/research/project/academic/articles/microsoft-academic-to-expand-horizons-with-community-driven-approach/). While many people have not heard of them, they were by far the largest source of scholarly metadata. This data powered, directly or indirectly, many of the sites academics use today. There have been a number of blog posts covering "what's next" ([1](https://www.natureindex.com/news-blog/microsoft-academic-graph-discontinued-whats-next), [2](https://blogs.lse.ac.uk/impactofsocialsciences/2021/05/27/goodbye-microsoft-academic-hello-open-research-infrastructure/)). None of them get into the details of where tools builders should turn to after MAG. So this is a post attempting to do that with the two major players currently out there. [The Lens](https://www.semanticscholar.org/) and [Semantic Scholar](https://www.semanticscholar.org/). The bulk of the test is done by randomly selecting 100,000 papers from the MAG corpus, querying each of the services, and comparing the results.
+As many know, [Microsoft Academic is shutting down](https://www.microsoft.com/en-us/research/project/academic/articles/microsoft-academic-to-expand-horizons-with-community-driven-approach/). Some people may have not heard of them or, if they have, did not understand the service they provided. They were by far the largest source of free/open scholarly metadata. This data powered, directly or indirectly, many of the sites academics use today. There have been a number of blog posts covering "what's next" ([1](https://www.natureindex.com/news-blog/microsoft-academic-graph-discontinued-whats-next), [2](https://blogs.lse.ac.uk/impactofsocialsciences/2021/05/27/goodbye-microsoft-academic-hello-open-research-infrastructure/)). None of them get into the details of where tools builders should turn to after MAG. So this is a post attempting to do that with the two major players currently out there. [The Lens](https://www.semanticscholar.org/) and [Semantic Scholar](https://www.semanticscholar.org/). The bulk of the test is done by randomly selecting 100,000 papers from the MAG corpus, querying each of the services, and comparing the results.
 
 # Deciding Who to Test
 I know there are others out there like CrossRef, Dimensions, CORE, etc but for my purposes I want:
 
-1. The most data possible, this means I am looking at a data aggregator who will blend in data from sources like CrossRef.
+1. The most data possible, this means I am looking at a data aggregator who will blend in data from sources like CrossRef, arXiv, etc.
 2. It needs to be free. Inciteful is free and I can only keep it that way if my data is free. (Dimensions is paid)
 3. I need either bulk data dumps or insanely high API limits (so I can download each paper individually). (CORE has low API limits)
 4. It needs to be kept up to date. Data dumps don't help if they are a year old. (CORE's data dumps are old)
 
-Given the above criteria, as of now, The Lens and Semantic Scholar are the only ones which fit the bill. If you know if any others that might work, let me know.
+Given the above criteria, as of now, The Lens and Semantic Scholar are the only ones which fit the bill. If you know if any others that might work, let me know and I'll try to add them here.
 
 There have been rumblings about [OpenAlex](https://blog.ourresearch.org/openalex-update-june/) but unfortunately as of this writing it is not yet live.
-
-# Data Sources
-
-There are a ton of different metadata providers out there. CrossRef, Dimensions, CORE,
-OpenCitations, the publishers themselves, etc. Both The Lens and Semantic Scholar pull data from many of these sources. According to The Len's website they get data from the [following sources](https://www.lens.org/):
-
-![](/assets/img/lens-data-sources.png)
-
-It should be noted that The Lens started off as a patent search product that expanded into academic literature, hence places like the USPTO and WIPO. As far as I'm aware, they are also the source of all patent data coming into Microsoft Academic.
-
-According to Semantic Scholar they get their data from the [following sources](https://www.semanticscholar.org/about/publishers):
-
-![](/assets/img/ss-data-sources.png)
-
-It seems like Semantic Scholar integrates more with primary sources of data than The Lens, who is more of an "aggregator of aggregators".
 
 # Evaluation Criteria
 For the two that made it into the ring. I'm going to be evaluating them on a few different criteria:
@@ -48,6 +33,21 @@ For the two that made it into the ring. I'm going to be evaluating them on a few
 
 These criteria are just what's important for Inciteful, YMMV.
 
+# Data Sources
+
+There are a ton of different metadata providers out there. CrossRef, Dimensions, CORE,
+OpenCitations, the publishers themselves, etc. Both The Lens and Semantic Scholar pull data from many of these sources. According to The Len's website they get data from the [following sources](https://www.lens.org/):
+
+![](/assets/img/lens-data-sources.png)
+
+It should be noted that The Lens started off as a patent search product that expanded into academic literature, hence places like the USPTO and WIPO. As far as I'm aware, they are also the source of all patent data coming into Microsoft Academic.
+
+According to Semantic Scholar they get their data from the [following sources](https://www.semanticscholar.org/about/publishers):
+
+![](/assets/img/ss-data-sources.png)
+
+It seems like Semantic Scholar integrates more with primary (read, publisher) sources of data than The Lens, who is more of an "aggregator of aggregators". 
+
 # 1. Overall Coverage
 
 Let's start by discussing what "coverage" actually means. Coverage in this context can mean a few different things:
@@ -57,17 +57,15 @@ Let's start by discussing what "coverage" actually means. Coverage in this conte
 3. The most citations in the index
 4. et al
 
-For my purposes, I'm most interested in a combination of 2 and 3. I don't care if the index has a ton of stuff that is not academic in nature and given the service Inciteful provides, I want to have the papers which are in the index to have the best citation coverage possible.
+For my purposes, I'm most interested in a combination of 2 and 3. I don't care if the index has a ton of stuff that is not academic in nature and given the service Inciteful provides, I want to have the papers which are in the index to have the best citation coverage possible. Also, while patent data from MAG/The Lens is currently in my index, and it is nice to have, it [doesn't seem terribly important](https://twitter.com/Inciteful_xyz/status/1438811333265330183) to my users.
 
 ## The Test
 
-The main part of the test is going to be evaluating the coverage portion. Being data aggregators each of them get their data from a different set of sources and integrate them into a coherent database in their own way. As of now I am testing this by randomly selecting 100,000 MAG ids out of the latest data dump (2021-08-30), pulling the data from Mag, The Lens, and Semantic Scholar using their respective APIs. From there I am comparing the results from each service. Focusing specifically on if the paper was found, and if so, the citation and reference counts. The data was pulled from the APIs on 2021-09-29. Since Inciteful is most concerned about making connections between papers, that is what I will be focusing on and making conclusions about. You may read the results differently.
+The main part of the test is going to be evaluating the coverage portion. Being data aggregators each of them get their data from a different set of sources and integrate them into a coherent database in their own way. I am testing their "coverage" by randomly selecting 100,000 MAG ids out of the data dump from 2021-08-30, then pulling the data from Mag, The Lens, and Semantic Scholar using their respective APIs. From there I am comparing the results from each service. Focusing specifically on if the paper was found, and if so, the citation and reference counts. The data was pulled from the APIs on 2021-09-29. Since Inciteful is most concerned about making connections between papers, I will be focusing on citations and making conclusions about the services based on that coverage. You may read the results differently.
 
-There is also a big hole in this test, the academic literature that never made it into MAG. A future test could include randomly pulling data from other sources such as CrossRef but for now since MAG is the [largest database outside of Google Scholar](https://link.springer.com/article/10.1007/s11192-020-03690-4) this was the best I could do for now.
-
-I'm going to drop a bunch of numbers on you so you now so you can draw your own conclusions. I've also posted the sqlite database with the raw numbers so you can do your own queries.
-
+There is also a big hole in this test, the academic literature that never made it into MAG. A future test could include randomly pulling data from other sources such as CrossRef but for now, since MAG is the [largest database outside of Google Scholar](https://link.springer.com/article/10.1007/s11192-020-03690-4), this was the best I could do without adding a bunch of extra work.
 ## Summary Data
+I'm going to drop a bunch of numbers so you can draw your own conclusions. I've also posted the sqlite database with the raw numbers so you can do your own queries.
 
 The first table is simple summary data cut a few different ways. The first column of data is all of the items we found in Inciteful. It doesn't equal 100k exactly because I did the random number generation from the ID database I maintain. This database contains all of the historical IDs as well as the current ones. Over time MAG drops items from it's DB for various reasons. So in this instance ~3.7% of the IDs in my database were dropped by MAG. The second and third columns filter results to only those papers found by The Lens and Semantic Scholar respectively. The fourth column filters down to papers which have any sort of citation data from any source.  The final is non-patent papers with citation data, as those are the papers I'm most interested in.
 
@@ -132,7 +130,7 @@ A large portion of these are recent, so we can possibly chalk those up to a timi
 Semantic Scholar on the other hand has a **lot** more missing ~7,000 papers when not accounting for patents.  When I inquired about this, the response I got was that they have filtering when importing data which tries to look for "non-scientific" or gray literature and stops it from entering the index.  So basically they have stricter criteria than MAG for what constitutes academic literature.  Which makes sense and is actually a good thing because once MAG goes away, they are going to already have an opinion as to what to index when they encounter something new.  In a related note, Semantic Scholar is also doing other things like paper disambiguation which made tracking everything down a bit more complicated.  For example with this paper from arXiv MAG indexes both the [actual article](https://academic.microsoft.com/paper/3020022875/) as well as the [conference proceeding](https://academic.microsoft.com/paper/3035702361/).  So it's possible they are also doing other disambiguation which I missed.  In line with them maintaining their own index rather than mirroring it (like Inciteful), it looks as though they have "found" a ~1,700 papers that Inciteful did not as a result of the papers being dropped from MAG. 
 
 ## Citation Coverage
-I'm most interested in the last column of the summary table (replicated in part below). I want to look at papers which have some sort of citation data associated with them. Papers which don't have any citations or references are pretty useless to Inciteful as I cannot build a graph without them. Ideally the more citations the better.  Also, while patent data is nice to have, it [doesn't seem terribly important](https://twitter.com/Inciteful_xyz/status/1438811333265330183) to my users.
+I'm most interested in the last column of the summary table (replicated in part below). I want to look at papers which have some sort of citation data associated with them. Papers which don't have any citations or references are pretty useless to Inciteful as I cannot build a graph without them. Ideally the more citations the better.
 
 |              | Has Cit & Non-Pat. |
 | ------------ | ------------------ |
